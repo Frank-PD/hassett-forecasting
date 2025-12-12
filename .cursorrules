@@ -1,0 +1,73 @@
+# Cursor AI Rules for Hassett Forecasting Project
+
+## Project Context
+This is a production-ready forecasting system for predicting EO box volumes across multiple distribution centers. The system achieves 92-93% accuracy through advanced statistical and ML methods.
+
+## Code Style Guidelines
+- Follow PEP 8 strictly
+- Use type hints for all function parameters and return values
+- Write comprehensive docstrings (Google style)
+- Maximum line length: 100 characters
+- Use meaningful variable names (no single letters except loop counters)
+
+## Architecture Patterns
+- Separate concerns: data loading, preprocessing, modeling, evaluation
+- Use dependency injection for database paths and configuration
+- Implement factory pattern for model creation
+- Use strategy pattern for different forecasting approaches
+
+## Testing Requirements
+- Write unit tests for all new functions
+- Maintain >80% code coverage
+- Use pytest fixtures for common test data
+- Mock database calls in tests
+
+## Data Handling
+- Always validate input data before processing
+- Handle missing values explicitly
+- Log data quality issues
+- Never commit actual data files (use .gitignore)
+
+## Forecasting Best Practices
+- Use 2022 Week N baseline for MAX product
+- Use 2024 Week N baseline for EXP product
+- Apply YoY trend adjustment (recent 8 weeks / last year 8 weeks)
+- Apply Fourier seasonal adjustment (1.27x for peak weeks)
+- Use hybrid day-of-week distribution
+
+## Error Handling
+- Use try-except blocks for database operations
+- Raise custom exceptions with clear messages
+- Log errors with context (ODC, week, product type)
+- Implement graceful degradation (fallback to simpler models)
+
+## Performance Optimization
+- Cache frequently accessed data
+- Use pandas vectorized operations (avoid loops)
+- Profile code before optimizing
+- Use generators for large datasets
+
+## Documentation
+- Update README when adding new features
+- Document all configuration options
+- Keep inline comments minimal (prefer clear code)
+- Update API_REFERENCE.md for public methods
+
+## Git Workflow
+- Create feature branches from main
+- Use conventional commit messages (feat:, fix:, docs:, etc.)
+- Squash commits before merging
+- Never commit to main directly
+
+## Specific to This Project
+- ODC tier classification: Large (LAX, EWR, IAD, SLC, SFO, CLT), Medium (7 ODCs), Small (9 ODCs)
+- Product types: MAX and EXP (model separately)
+- Week 50 is peak season (Dec 9-12)
+- Always validate forecasts against actuals
+- Monday predictions need special handling (use Holiday pattern)
+
+## When Using AI Assistance
+- Prefer statistical methods over complex ML when accuracy is similar
+- Always validate AI-generated forecasts against business logic
+- Test on historical weeks before deploying to production
+- Explain methodology to non-technical stakeholders
