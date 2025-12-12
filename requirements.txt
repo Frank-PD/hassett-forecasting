@@ -14,7 +14,8 @@ scikit-learn>=1.3.0
 xgboost>=2.0.0
 
 # Database
-sqlite3  # Built-in with Python
+# sqlite3 is built-in with Python, no need to install
+databricks-sql-connector>=4.0.0
 
 # Visualization
 matplotlib>=3.7.0
