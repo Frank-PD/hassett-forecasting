@@ -1,0 +1,62 @@
+================================================================================
+FORECASTING MODEL ENSEMBLE - DEPLOYMENT SUMMARY
+================================================================================
+
+EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+
+This deployment uses an ENSEMBLE APPROACH where each route is forecasted
+using its optimal model (the model with lowest historical error for that route).
+
+Performance Metrics:
+  • Ensemble Average MAPE: 14.3%
+  • Best Single Model MAPE: 55.8%
+  • Improvement: 41.5% better than best single model
+  • Relative Improvement: 74.4%
+
+--------------------------------------------------------------------------------
+DEPLOYMENT INSTRUCTIONS
+--------------------------------------------------------------------------------
+
+1. Load the routing table: route_model_routing_table.csv
+
+2. For each route to forecast:
+   a. Look up route in routing table by:
+      - route_key (exact match)
+      OR
+      - ODC + DDC + ProductType + dayofweek
+
+   b. Use the 'Optimal_Model' specified for that route
+
+   c. Check 'Confidence' level:
+      - HIGH: Error typically < 20%
+      - MEDIUM: Error typically 20-50%
+      - LOW: Error typically > 50% (use with caution)
+
+3. If route not found in routing table:
+   - Use default model: 04_Recent_8W
+   - This is the best performing single model overall
+
+--------------------------------------------------------------------------------
+MODELS IN ENSEMBLE
+--------------------------------------------------------------------------------
+
+01_Historical_Baseline                      821 routes
+02_Recent_2W                                 98 routes
+04_Recent_8W                                 94 routes
+08_Week_Specific                             73 routes
+18_Clustering                                65 routes
+14_SARIMA                                    50 routes
+07_Same_Week_Last_Year                       49 routes
+12_Median_Recent                             39 routes
+16_ML_Regressor                              37 routes
+09_Exp_Smoothing                             35 routes
+03_Recent_4W_HYBRID                          34 routes
+05_Trend_Adjusted                            33 routes
+11_Hybrid_Week_Blend                         18 routes
+06_Prior_Week                                17 routes
+13_Weighted_Recent_Week                      16 routes
+10_Probabilistic                              4 routes
+15_ML_Classifier_Simple_Vol                   4 routes
+
+================================================================================

@@ -1,0 +1,12 @@
+{
+  "database": "local_performance_tracking.db",
+  "routing_table": "data/routing_tables/routing_table_current.csv",
+  "historical_data": "data/historical/",
+  "forecast_output": "data/forecasts/",
+  "actuals_input": "data/actuals/",
+  "meta_model_path": "models/meta_models/meta_model.pkl",
+  "performance_lookback_weeks": 8,
+  "routing_update_threshold": 5.0,
+  "min_weeks_for_update": 4,
+  "retraining_frequency": "quarterly"
+}
