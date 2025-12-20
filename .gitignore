@@ -8,40 +8,39 @@ venv/
 env/
 ENV/
 .venv
+*.egg-info/
+dist/
+build/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
 
-# Data files - exclude large CSVs
-*.csv
-!routes_week_*.csv
-!route_model_routing_table.csv
+# Data files (managed in Azure Data Lake)
+data/performance/*.db
+data/performance/*.db-journal
+data/forecasts/
+data/routing_tables/
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Directories with large files
-data/
-archive/
-models/
-visualizations/
+# Keep folder structure
+!data/performance/.gitkeep
+!data/forecasts/.gitkeep
+!data/routing_tables/.gitkeep
 
 # Logs
 *.log
+backfill_output.log
 
 # OS
 .DS_Store
 Thumbs.db
 
-# IDE
-.vscode/
-.idea/
-*.swp
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
 
 # Temporary
 *.tmp
-organize_scripts.txt
-consolidate_scripts.sh
-week51_auto_complete.sh

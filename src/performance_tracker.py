@@ -91,16 +91,25 @@ class PerformanceTracker:
             year = row['year']
             actual_value = row['actual_value']
 
-            # Get all model columns
-            model_cols = [col for col in week_results_df.columns if not col.endswith('_error_pct') and
-                         col not in ['route_key', 'ODC', 'DDC', 'ProductType', 'dayofweek', 'week_number', 'year', 'actual_value']]
+            # Get all model columns (exclude metadata and error columns)
+            exclude_cols = ['route_key', 'ODC', 'DDC', 'ProductType', 'dayofweek', 'week_number', 'year',
+                           'actual_value', 'Actual', 'Winner_Model', 'Winner_Error%', 'best_model',
+                           'best_error', 'confidence']
+            model_cols = [col for col in week_results_df.columns
+                         if not col.endswith('_Error%')
+                         and not col.endswith('_error_pct')
+                         and col not in exclude_cols]
 
             for model_col in model_cols:
                 forecast_value = row[model_col]
-                error_col = f"{model_col}_error_pct"
+                # Check both naming conventions for error column
+                error_col = f"{model_col}_Error%"
+                error_col_alt = f"{model_col}_error_pct"
 
                 if error_col in week_results_df.columns:
                     error_pct = row[error_col]
+                elif error_col_alt in week_results_df.columns:
+                    error_pct = row[error_col_alt]
                 else:
                     # Calculate error if not provided
                     if actual_value > 0:
@@ -141,7 +150,7 @@ class PerformanceTracker:
         df = pd.read_sql_query(query, self.conn, params=(route_key, route_key, lookback_weeks))
         return df
 
-    def update_routing_table(self, current_routing_df, lookback_weeks=8, min_weeks=4):
+    def update_routing_table(self, current_routing_df, lookback_weeks=4, min_weeks=2):
         """
         Update routing table based on recent performance.
 

@@ -23,6 +23,7 @@ sys.path.insert(0, str(project_root / 'src'))
 
 # Import model functions
 from forecast_comprehensive_all_models import ComprehensiveModels
+from performance_tracker import PerformanceTracker
 
 def load_previous_model_performance(project_root):
     """Load most recent performance summary to identify underperforming models"""
@@ -259,6 +260,20 @@ def main():
         print(f"  {i:2}. {model:<30} {count:4,} routes ({pct:5.1f}%)")
     print()
 
+    # Step 4b: Record performance to tracking database (WEEKLY UPDATE)
+    print(f"📊 Step 4b: Recording performance to tracking database...")
+    db_path = project_root / 'data' / 'performance' / 'performance_tracking.db'
+    tracker = PerformanceTracker(str(db_path))
+
+    # Prepare data for recording - need route info + all model forecasts + actual
+    week_results = df_forecasts.copy()
+    week_results['week_number'] = EVALUATION_WEEK
+    week_results['year'] = EVALUATION_YEAR
+    week_results['actual_value'] = week_results['Actual']
+
+    tracker.record_week_performance(week_results)
+    print(f"✅ Performance recorded to {db_path.name}\n")
+
     # Step 5: Save files (organized in data/ folder)
     print(f"📊 Step 5: Saving files...")
 
@@ -299,6 +314,25 @@ def main():
     current_routing_file = project_root / 'data' / 'routing_tables' / 'route_model_routing_table.csv'
     routing_table.to_csv(current_routing_file, index=False)
     print(f"💾 Updated: data/routing_tables/{current_routing_file.name}")
+
+    # Step 5b: Update routing table based on rolling 4-week performance
+    print(f"\n📊 Step 5b: Updating routing table based on rolling 4-week performance...")
+
+    # Load current routing table for update
+    routing_for_update = routing_table.copy()
+    routing_for_update.rename(columns={'best_model': 'Optimal_Model', 'best_error': 'Historical_Error_Pct'}, inplace=True)
+
+    # Update based on rolling performance (4 weeks lookback, min 2 weeks data)
+    updated_routing = tracker.update_routing_table(routing_for_update, lookback_weeks=4, min_weeks=2)
+
+    # Save updated routing table
+    updated_routing.rename(columns={'Optimal_Model': 'best_model', 'Historical_Error_Pct': 'best_error'}, inplace=True)
+    updated_routing.to_csv(current_routing_file, index=False)
+    print(f"💾 Updated routing table with rolling performance: {current_routing_file.name}")
+
+    # Reload for forecast generation
+    routing_table = updated_routing.copy()
+    routing_table.rename(columns={'best_model': 'best_model', 'best_error': 'best_error'}, inplace=True)
 
     # Save performance summary
     performance_summary = {
@@ -491,7 +525,9 @@ def main():
     print("="*80)
 
     conn.close()
+    tracker.close()
     print("\n🔌 Databricks connection closed")
+    print("🔌 Performance tracker database closed")
 
     # Run meta-analysis to track model performance trends
     print("\n" + "="*80)
