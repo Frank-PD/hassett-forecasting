@@ -214,7 +214,7 @@ Routes with LOW confidence automatically use an ensemble blend of the top 3 mode
 
 ## Support
 
-For questions or issues, contact the Forecasting Team or create an issue in Azure DevOps.
+Frank Giles
 
 ---
 
